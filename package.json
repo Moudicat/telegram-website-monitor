@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "nodemon": "nodemon ./dist/index.js",
     "build": "tsc",
-    "dev": "npm run clean && npm run build  && concurrently -r 'npm run tsc-watch' 'npm run nodemon'"
+    "dev": "npm run clean && npm run build  && npm run nodemon"
   },
   "repository": "https://github.com/moudicat/telegram-website-monitor.git",
   "author": "Moudicat <i@0u0b.com>",
@@ -22,6 +22,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.29.0"
+    "node-telegram-bot-api": "^0.29.0",
+    "request": "^2.83.0"
   }
 }

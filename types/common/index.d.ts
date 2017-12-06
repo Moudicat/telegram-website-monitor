@@ -1,21 +1,19 @@
 interface IConfig {
-  telegram: ITelegramConfig,
-  default: IDefaultConfig
+  telegram: ITelegramConfig;
+  settings: ISettingsConfig;
 }
 
 interface ITelegramConfig {
-  token: string,
-  userIds: string[] | number[],
-  groupIds: string[] | number[],
-  channelIds: string[] | number[],
-  notifyGroup: string[]
+  token: string;
+  userIds: string[] | number[];
+  groupIds: string[] | number[];
+  channelIds: string[] | number[];
+  notifyGroup: string[];
 }
 
-interface IDefaultConfig {
-  checkInterval: number
+interface ISettingsConfig {
+  checkInterval: number;
+  method: string;
+  website: string;
 }
 
-interface ITelegram {
-  bot: any;
-  notify(msg: string);
-}

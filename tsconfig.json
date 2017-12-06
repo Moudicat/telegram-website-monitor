@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    // "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "baseUrl": "./src",    
@@ -10,9 +9,5 @@
   },
   "include": [
     "./src/**/*"
-  ],
-  "exclude": [
-    "./dist"
   ]
-
 }

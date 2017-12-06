@@ -6,8 +6,10 @@ const config: IConfig = {
     channelIds: [],
     notifyGroup: ['channel'] // channel user group
   },
-  default: {
-    checkInterval: 20
+  settings: {
+    checkInterval: 20,
+    method: 'GET',
+    website: ''
   }
 };
 
