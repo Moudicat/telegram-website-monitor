@@ -17,17 +17,20 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
 
   let command: string = match[1];
   if (command) {
+    command = command.trim();
     let commandArr: string[] = command.split(' ');
     try {
       switch(commandArr[0]) {
         case 'add':
           let [cmd, website, method, interval] = commandArr;
-          if (!website && !isURL(website)) {
+          if (!website || !isURL(website)) {
             throw new Error('不是有效的网址!');
           }
-          method = method.toUpperCase();
-          if (!isHTTPVerbs(method)) {
-            throw new Error('HTTP动词无效!');
+          if (method) {
+            method = method.toUpperCase();
+            if (!isHTTPVerbs(method)) {
+              throw new Error('HTTP动词无效!');
+            }
           }
 
           let monitorParams = {
@@ -56,10 +59,9 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
           break; 
       }
     } catch (err) {
-      tg.bot.sendMessage(rplId, err);
+      tg.bot.sendMessage(rplId, err.message);
     }
   } else {
-    // no command
     tg.bot.sendMessage(rplId, '/monitor add [website] [method] [time] \n /monitor rm [id] \n /monitor list');
   }
 });
