@@ -59,6 +59,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
           });
           
           botList.push(monitor);
+          tg.bot.sendMessage(rplId, '已创建任务');
           break;
         
         case 'remove':
@@ -92,6 +93,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
             tg.bot.sendMessage(rplId, '当前任务列表为空, 请通过 /monitor add [your website] 来添加');
           }
           break;
+          
         default:
           throw new Error('Monitor指令错误');
       }
