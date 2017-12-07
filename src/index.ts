@@ -44,16 +44,16 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
 
           monitor.on('ok', (info: IMonitorOk) => {
             if (info.latency > config.settings.highLatency) {
-              tg.notify(`网站${info.website}, 连接缓慢，延迟${info.latency}ms`);
+              tg.notify(`[连接缓慢] 网站${info.website}, 延迟${info.latency}ms`);
             }
           });
 
           monitor.on('down', (info: IMonitorDown) => {
-            tg.notify(`网站${info.website}, 连接异常，状态码${info.code}, ${info.message}`);
+            tg.notify(`[连接异常] 网站${info.website}, 状态码${info.code}, ${info.message}`);
           });
 
           monitor.on('error', err => {
-            tg.notify(`网站:${website}, ERROR:${err.message}`);
+            tg.notify(`[ERROR] 网站:${website}, ${err.message}`);
             console.log(err.message);
             monitor.stop();
           });
@@ -78,14 +78,18 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
           let getTemplate = (id: number, website: string, method: string, interval: number) => {
             return `ID: ${id} | ${website} | ${method} | ${interval}min/check\n`;
           }
-          if (botList.length) {
-            let rplMsg = ' ';
+
+          let realLength = 0;
+          botList.forEach(() => realLength++);
+
+          if (realLength) {
+            let rplMsg = '[当前运行任务]\n';
             botList.forEach((bot, index) => {
-              rplMsg += getTemplate(index, bot.website, bot.method, bot.interval);
+              rplMsg += getTemplate(index, bot.website, bot.method, bot.interval / (1000 * 60));
             });
             tg.bot.sendMessage(rplId, rplMsg);
           } else {
-            tg.bot.sendMessage(rplId, '当前没有正在运行的任务, 请通过 /monitor add http://sample.com 来添加');
+            tg.bot.sendMessage(rplId, '当前任务列表为空, 请通过 /monitor add [your website] 来添加');
           }
           break;
         default:

@@ -51,8 +51,6 @@ export default class Telegram implements ITelegram {
 
     if (notifyGroupId.length) {
       this.notify(`已开启通知ID：${notifyGroupId}`);
-    } else {
-      this.notify('尚未设置通知群组');
     }
   }
 
