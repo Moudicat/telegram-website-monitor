@@ -1,5 +1,9 @@
 interface IMonitor {
-  ping();
+  website: string;
+  interval: number;
+  method: string;
+  
+  pingOnce();
   stop();
 }
 
@@ -18,4 +22,11 @@ interface IMonitorDown {
   website: string;
   code: number;
   message: string
+}
+
+interface IMonitorPingOnce {
+  website: string;
+  code?: number;
+  message?: string;
+  latency?: number;
 }

@@ -4,9 +4,10 @@ import config from '../config/';
 import { read } from 'fs';
 
 export default class Monitor extends events.EventEmitter implements IMonitor {
-  private method: string;
-  private website: string;
-  private interval: number;
+  public website: string;
+  public method: string;
+  public interval: number;
+  
   private timer: number;
 
   constructor(opts: IMonitorOpts) {
@@ -38,7 +39,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
     this.emit('stop', this.website);
   }
 
-  public ping() {
+  private ping() {
     const self = this;
     let currentTime = Date.now();
     let options = {
@@ -67,6 +68,39 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
         this.emit('err', err);
       }
     });
+  }
+
+  public pingOnce(): Promise<IMonitorPingOnce|Error> {
+    return new Promise((resolve, reject) => {
+      const self = this;
+      let currentTime = Date.now();
+      let options = {
+        url: this.website,
+        method: this.method
+      };
+  
+      request(options, (err, res, body) => {
+        let latency = Date.now() - currentTime;
+  
+        if (!err) {
+          if (res.statusCode === 200) {
+            resolve({
+              website: this.website,
+              latency
+            });
+          } else {
+            resolve({
+              website: this.website,
+              code: res.statusCode,
+              message: res.statusMessage
+            });
+          }
+        } else {
+          reject(err);
+        }
+      });
+    });
+    
   }
 
 }

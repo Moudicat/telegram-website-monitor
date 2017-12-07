@@ -9,7 +9,8 @@ const config: IConfig = {
   settings: {
     checkInterval: 20,
     method: 'GET',
-    website: ''
+    website: '',
+    highLatency: 1800
   }
 };
 

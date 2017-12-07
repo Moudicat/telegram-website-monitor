@@ -28,7 +28,7 @@ export default class Telegram implements ITelegram {
 
     for (let value of config.telegram.notifyGroup) {
       switch(value) {
-        case 'channal':
+        case 'channel':
           notifyGroupId.push(...this.getNotifyIds('channelIds'));
           break;
         case 'group':
@@ -46,6 +46,13 @@ export default class Telegram implements ITelegram {
       for (let id of notifyGroupId) {
         this.bot.sendMessage(id, msg);
       }
+    }
+    this.notify(msg);
+
+    if (notifyGroupId.length) {
+      this.notify(`已开启通知ID：${notifyGroupId}`);
+    } else {
+      this.notify('尚未设置通知群组');
     }
   }
 

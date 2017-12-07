@@ -15,5 +15,6 @@ interface ISettingsConfig {
   checkInterval: number;
   method: string;
   website: string;
+  highLatency: number;
 }
 
