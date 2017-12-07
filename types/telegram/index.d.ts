@@ -1,6 +1,13 @@
+
 interface ITelegram {
-  bot: any;
+  bot: ITelegramBot;
+}
+
+interface ITelegramBot {
   notify(msg: string);
+
+  onText(regexp: RegExp, cb: (msg: ITGIncomingMessage, match: string[]) => void );
+  sendMessage(id: number, msg: string);
 }
 
 interface ITGIncomingMessage {

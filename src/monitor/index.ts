@@ -22,7 +22,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
 
   private start() {
     if (!this.website) {
-      this.emit('error', 'No website to monitor');
+      this.emit('error', '不是有效的网址!');
       return;
     }
 
@@ -31,7 +31,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
     this.timer = setInterval(this.ping.bind(this), this.interval);
   }
 
-  private stop() {
+  public stop() {
     clearInterval(this.timer);
     this.timer = null;
 
@@ -49,13 +49,22 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
     request(options, (err, res, body) => {
       let latency = Date.now() - currentTime;
 
-      if (!err && res.statusCode === 200) {
-        this.emit('ok', {
-          website: this.website,
-          latency
-        });
+      if (!err) {
+        if (res.statusCode === 200) {
+          this.emit('ok', {
+            website: this.website,
+            latency
+          });
+        } else {
+          this.emit('down', {
+            website: this.website,
+            code: res.statusCode,
+            message: res.statusMessage
+          });
+        }
+
       } else {
-        this.emit('down', {err, res});
+        this.emit('err', err);
       }
     });
   }

@@ -2,9 +2,26 @@
 # yarn lockfile v1
 
 
+"@types/form-data@*":
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/@types/form-data/download/@types/form-data-2.2.1.tgz#ee2b3b8eaa11c0938289953606b745b738c54b1e"
+  dependencies:
+    "@types/node" "*"
+
+"@types/node@*":
+  version "8.0.56"
+  resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-8.0.56.tgz#c4652f88d7a677e26ccc16c1485c282ce28f1ce9"
+
 "@types/node@^8.0.55":
   version "8.0.55"
   resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-8.0.55.tgz#015966c0af809216b8a46cc527b5c211994d36f0"
+
+"@types/request@^2.0.8":
+  version "2.0.8"
+  resolved "http://registry.npm.taobao.org/@types/request/download/@types/request-2.0.8.tgz#424d3de255868107ed4dd6695c65c5f1766aba80"
+  dependencies:
+    "@types/form-data" "*"
+    "@types/node" "*"
 
 abbrev@1:
   version "1.1.1"
