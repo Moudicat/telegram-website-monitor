@@ -101,6 +101,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
           }
         } else {
           err.website = this.website;
+          this.stop();
           reject(err);
         }
       });

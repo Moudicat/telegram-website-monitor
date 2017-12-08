@@ -5,7 +5,7 @@ import Monitor from './monitor/';
 import { isURL, isHTTPVerbs } from './services/util';
 import config from './config/';
 
-let tg: ITelegram = new TelegramBot();
+let tg: TelegramBot = new TelegramBot();
 let botList: IMonitor[] = [];
 
 tg.bot.onText(/\/ping/, (msg: ITGIncomingMessage, match: string[]) => {
@@ -38,7 +38,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
           interval: parseFloat(interval) ? parseFloat(interval) : undefined
         };
 
-        let monitor = new Monitor(monitorParams);
+        let monitor: Monitor = new Monitor(monitorParams);
 
         monitor.on('ok', (info: IMonitorOk) => {
           if (info.latency > config.settings.highLatency) {
@@ -50,8 +50,8 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
           tg.notify(`[连接异常] 网站${info.website}, 状态码${info.code}, ${info.message}`);
         });
 
-        monitor.on('error', err => {
-          tg.notify(`[ERROR] 网站:${website}, ${err.message}`);
+        monitor.on('err', (err: Error) => {
+          tg.notify(`[ERROR] 网站:${website}\n${err.message}`);
           console.log(err.message);
           monitor.stop();
         });
@@ -96,21 +96,21 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
       case 'start':
         let [startCmd, startId] = commandArr;
         let startIdNum = Number(startId);
-        if (isNaN(startIdNum) || startIdNum >= botList.length || startIdNum < 0) {
+        if (isNaN(startIdNum) || startIdNum >= botList.length || startIdNum < 0 || !botList[startIdNum]) {
           throw new Error('请输入正确任务ID');
         }
-        botList[startIdNum].start();
+        !botList[startIdNum].isRunning && botList[startIdNum].start();
         tg.bot.sendMessage(rplId, `任务${startIdNum}已开启`);
         break;
       
       case 'stop':
         let [stopCmd, stopId] = commandArr;
-        let stopIdNum = Number(startId);
-        if (isNaN(stopIdNum) || stopIdNum >= botList.length || stopIdNum < 0) {
+        let stopIdNum = Number(stopId);
+        if (isNaN(stopIdNum) || stopIdNum >= botList.length || stopIdNum < 0 || !botList[stopIdNum]) {
           throw new Error('请输入正确任务ID');
         }
-        botList[stopIdNum].stop();
-        tg.bot.sendMessage(rplId, `任务${startIdNum}已停止`);
+        botList[stopIdNum].isRunning && botList[stopIdNum].stop();
+        tg.bot.sendMessage(rplId, `任务${stopIdNum}已停止`);
         break;
 
       case 'clear':
@@ -126,20 +126,21 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
         Promise.all(botList.map(pingOnce))
           .then(pingResult => {
             let testRpl = '[测试结果]\n';
-
             const getTestTemplate = (id: number, website: string, code?: number, message?: string, latency?: number) => {
               return `ID: ${id} | ${website} | ${code ? code : '200'} | ${code ? message : `${latency}ms`}\n`;
             };
 
             pingResult.forEach((res: IMonitorPingOnce, index: number) => {
-              testRpl += getTestTemplate(index, res.website, res.code, res.message, res.latency);
+              if (res) {
+                testRpl += getTestTemplate(index, res.website, res.code, res.message, res.latency);
+              }
             });
 
             tg.bot.sendMessage(rplId, testRpl);
           })
           .catch(err => {
             if (err.website) {
-              tg.bot.sendMessage(rplId, `[ERROR] 网站${err.website}连接失败, ${err.message}`);
+              tg.bot.sendMessage(rplId, `[ERROR] 网站${err.website} 连接失败\n ${err.message}`);
             } else {
               throw err;
             }
@@ -147,7 +148,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
         break;
 
       default:
-        throw new Error('Monitor指令错误' + '/monitor add [website] [method] [time] \n /monitor rm [id] \n /monitor list');
+        throw new Error('您可输入: \n' + '添加任务 /monitor add [website] [method] [time] \n 删除任务 /monitor rm [id] \n 查看任务列表 /monitor list \n 开启停止任务 /monitor start/stop [id] \n 立即测试 /monitor test\n');
     }
   } catch (err) {
     tg.bot.sendMessage(rplId, err.message);
