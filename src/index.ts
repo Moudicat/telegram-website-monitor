@@ -128,7 +128,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
             let testRpl = '[测试结果]\n';
 
             const getTestTemplate = (id: number, website: string, code?: number, message?: string, latency?: number) => {
-              return `ID: ${id} | ${website} | ${code ? code : `${latency}ms`} | ${code ? message : '200'}\n`;
+              return `ID: ${id} | ${website} | ${code ? code : '200'} | ${code ? message : `${latency}ms`}\n`;
             };
 
             pingResult.forEach((res: IMonitorPingOnce, index: number) => {
