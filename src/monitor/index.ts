@@ -7,6 +7,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
   public website: string;
   public method: string;
   public interval: number;
+  public isRunning: boolean;
   
   private timer: number;
 
@@ -21,12 +22,14 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
     this.start();
   }
 
-  private start() {
+  public start() {
     if (!this.website) {
       this.emit('error', '不是有效的网址!');
       return;
     }
 
+    this.isRunning = true;
+    
     this.ping();
 
     this.timer = setInterval(this.ping.bind(this), this.interval);
@@ -35,7 +38,8 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
   public stop() {
     clearInterval(this.timer);
     this.timer = null;
-
+    this.isRunning = false;
+    
     this.emit('stop', this.website);
   }
 
@@ -96,6 +100,7 @@ export default class Monitor extends events.EventEmitter implements IMonitor {
             });
           }
         } else {
+          err.website = this.website;
           reject(err);
         }
       });

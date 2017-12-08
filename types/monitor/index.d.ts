@@ -2,8 +2,10 @@ interface IMonitor {
   website: string;
   interval: number;
   method: string;
-  
+  isRunning: boolean;
+
   pingOnce();
+  start();
   stop();
 }
 
