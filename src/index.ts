@@ -7,13 +7,14 @@ import config from './config/';
 
 let tg: TelegramBot = new TelegramBot();
 let botList: IMonitor[] = [];
+const help: string = '帮助: \n添加任务 /monitor add [website] [method] [time]\n删除任务 /monitor rm [id]\n查看任务列表 /monitor list\n开启停止任务 /monitor start/stop [id]\n立即测试 /monitor test\n清空任务列表 /monitor clear';
 
 tg.bot.onText(/\/ping/, (msg: ITGIncomingMessage, match: string[]) => {
   const chatId = msg.chat.id;
   tg.bot.sendMessage(chatId, 'pong');
 });
 
-tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
+tg.bot.onText(/\/monitor ?(.*)/, (msg: ITGIncomingMessage, match: string[]) => {
   const rplId = msg.chat.id;
 
   let command: string = match[1].trim();
@@ -51,7 +52,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
         });
 
         monitor.on('err', (err: Error) => {
-          tg.notify(`[ERROR] 网站:${website}\n${err.message}`);
+          tg.notify(`[ERROR] 网站${website} 连接失败\n${err.message}`);
           console.log(err.message);
           monitor.stop();
         });
@@ -148,7 +149,7 @@ tg.bot.onText(/\/monitor (.+)/, (msg: ITGIncomingMessage, match: string[]) => {
         break;
 
       default:
-        throw new Error('您可输入: \n' + '添加任务 /monitor add [website] [method] [time] \n 删除任务 /monitor rm [id] \n 查看任务列表 /monitor list \n 开启停止任务 /monitor start/stop [id] \n 立即测试 /monitor test\n');
+        throw new Error(help);
     }
   } catch (err) {
     tg.bot.sendMessage(rplId, err.message);
